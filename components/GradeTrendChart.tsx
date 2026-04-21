@@ -9,19 +9,56 @@ import {
   LineElement,
   Tooltip,
   Legend,
+  type ChartOptions,
+  type TooltipItem,
 } from "chart.js";
 import { GRADES } from "@/lib/constants";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 interface MonthPoint {
-  month: string;   // e.g. "Jan 2026"
+  month: string;
   gradeIndex: number;
 }
 
 interface Props {
   points: MonthPoint[];
 }
+
+const options: ChartOptions<"line"> = {
+  responsive: true,
+  maintainAspectRatio: true,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label: (ctx: TooltipItem<"line">) => {
+          const grade = GRADES[ctx.parsed.y];
+          return grade ? ` ${grade}` : "";
+        },
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { font: { size: 11 }, color: "#9ca3af" },
+      border: { display: false },
+    },
+    y: {
+      min: 0,
+      max: GRADES.length - 1,
+      grid: { color: "#f3f4f6" },
+      border: { display: false },
+      ticks: {
+        font: { size: 11 },
+        color: "#9ca3af",
+        stepSize: 1,
+        callback: (value) => GRADES[value as number] ?? "",
+      },
+    },
+  },
+};
 
 export default function GradeTrendChart({ points }: Props) {
   if (points.length === 0) {
@@ -46,41 +83,6 @@ export default function GradeTrendChart({ points }: Props) {
       },
     ],
   };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: (ctx: { parsed: { y: number } }) => {
-            const grade = GRADES[ctx.parsed.y];
-            return grade ? ` ${grade}` : "";
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { font: { size: 11 }, color: "#9ca3af" },
-        border: { display: false },
-      },
-      y: {
-        min: 0,
-        max: GRADES.length - 1,
-        grid: { color: "#f3f4f6" },
-        border: { display: false },
-        ticks: {
-          font: { size: 11 },
-          color: "#9ca3af",
-          stepSize: 1,
-          callback: (value: number | string) => GRADES[value as number] ?? "",
-        },
-      },
-    },
-  } as const;
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-5 py-5 shadow-sm">

@@ -1,7 +1,14 @@
 "use client";
 
 import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  type ChartOptions,
+  type TooltipItem,
+} from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -16,13 +23,13 @@ interface Props {
   colors: string[];
 }
 
-const options = {
+const options: ChartOptions<"doughnut"> = {
   responsive: true,
   maintainAspectRatio: true,
   cutout: "65%",
   plugins: {
     legend: {
-      position: "bottom" as const,
+      position: "bottom",
       labels: {
         boxWidth: 12,
         boxHeight: 12,
@@ -33,15 +40,15 @@ const options = {
     },
     tooltip: {
       callbacks: {
-        label: (ctx: { label: string; parsed: number; dataset: { data: number[] } }) => {
-          const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+        label: (ctx: TooltipItem<"doughnut">) => {
+          const total = (ctx.dataset.data as number[]).reduce((a, b) => a + b, 0);
           const pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
-          return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
+          return ` ${ctx.label ?? ""}: ${ctx.parsed} (${pct}%)`;
         },
       },
     },
   },
-} as const;
+};
 
 export default function DonutChart({ title, slices, colors }: Props) {
   const total = slices.reduce((s, d) => s + d.count, 0);
