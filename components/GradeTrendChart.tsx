@@ -33,6 +33,7 @@ const options: ChartOptions<"line"> = {
     tooltip: {
       callbacks: {
         label: (ctx: TooltipItem<"line">) => {
+          if (ctx.parsed.y == null) return "";
           const grade = GRADES[ctx.parsed.y];
           return grade ? ` ${grade}` : "";
         },

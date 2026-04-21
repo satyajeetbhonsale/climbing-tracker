@@ -45,7 +45,7 @@ export default function GradeBarChart({ counts, title = "Climbs by grade" }: Pro
               fontSize: "12px",
               padding: "6px 10px",
             }}
-            formatter={(value: number) => [value, "climbs"]}
+            formatter={(value) => [String(value ?? ""), "climbs"]}
           />
           <Bar dataKey="count" fill="#111827" radius={[3, 3, 0, 0]} maxBarSize={40} />
         </BarChart>
