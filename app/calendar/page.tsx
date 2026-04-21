@@ -3,9 +3,10 @@ export const dynamic = "force-dynamic";
 import { fetchClimbs } from "@/lib/supabase";
 import CalendarView from "@/components/CalendarView";
 import Link from "next/link";
+import type { Climb } from "@/lib/types";
 
 export default async function CalendarPage() {
-  let climbs = [];
+  let climbs: Climb[] = [];
   let fetchError = "";
 
   try {
